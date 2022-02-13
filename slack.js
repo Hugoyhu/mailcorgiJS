@@ -349,6 +349,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 	console.log(thread_ts)
 	console.log(event, "Event")
 
+
 	// check if it was in thread
 	if (thread_ts == undefined) {
 		// return with error message
@@ -367,11 +368,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 	}
 
 	switch (reqCmd) {
-		case "accept": {
-			// send message to receiver
-		}
 
-		
 		case "purchase": {
 
 			// sort by envelope
@@ -390,7 +387,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 			let pkgInfo = await supabase.queryPackage(order.packageName);
 
 			console.log(order);
-			
+
 			console.log(pkgInfo);
 
 			if (pkgInfo.isEnvelope == true) {
@@ -415,6 +412,16 @@ app.event('app_mention', async ({ event, context, client }) => {
 
 		case "request": {
 			// send message to receiver
+
+
+			let receiverUID = await supabase.queryUIDbyTS(thread_ts);
+
+			console.log(receiverUID)
+
+			await app.client.chat.postMessage({
+				channel: receiverUID,
+				text: `Hi there! <@${event.user}> needs to send you something in the mail. Please run /update to update your address!`
+			});
 		}
 
 	}
