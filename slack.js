@@ -7,6 +7,8 @@ const supabase = require("./supabase.js");
 
 const pdf = require("./pdf.js")
 
+const fs = require("fs")
+
 const app = new App({
 		token: process.env.SLACK_BOT_TOKEN,
 		signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -21,8 +23,6 @@ const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
 	// LogLevel can be imported and used to make debugging simpler
 	logLevel: LogLevel.DEBUG
 });
-
-app
 
 app.command('/send', async ({ command, ack, respond }) => {
 	// Acknowledge command request
@@ -346,6 +346,8 @@ app.event('app_mention', async ({ event, context, client }) => {
 	}
 
 	thread_ts = event.thread_ts
+	console.log(thread_ts)
+	console.log(event, "Event")
 
 	// check if it was in thread
 	if (thread_ts == undefined) {
@@ -358,9 +360,9 @@ app.event('app_mention', async ({ event, context, client }) => {
 
 	if (reqCmd == undefined) {
 		const postResult = await app.client.chat.postMessage({
-				channel: process.env.mail_channel,
-				thread_ts: thread_ts,
-				text: "bjork!"
+			channel: process.env.mail_channel,
+			thread_ts: thread_ts,
+			text: "bjork!"
 		})
 	}
 
@@ -368,22 +370,27 @@ app.event('app_mention', async ({ event, context, client }) => {
 		case "accept": {
 			// send message to receiver
 		}
+
+		
 		case "purchase": {
 
 			// sort by envelope
 
 			// is the package an envelope
 
-			let senderAddress = supabase.queryAddress(event.user);
-			let receiverAddress = supabase.queryUIDbyTS(thread_ts);
+			let senderAddress = await supabase.queryAddress(event.user);
 
-			let order = await supabase.queryOrderInfoByUID(receiverAddress.uid);
+			let receiverUID = await supabase.queryUIDbyTS(thread_ts);
+
+			let receiverAddress = await supabase.queryAddress(receiverUID);
+
+			let order = await supabase.queryOrderInfoByUID(receiverUID);
 
 
 			let pkgInfo = await supabase.queryPackage(order.packageName);
 
 			console.log(order);
-
+			
 			console.log(pkgInfo);
 
 			if (pkgInfo.isEnvelope == true) {
@@ -392,7 +399,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 				pdf.createPDF(senderAddress.name, senderAddress.addr1, senderAddress.addr2, senderAddress.city, senderAddress.state, senderAddress.zip, senderAddress.country,
 							  receiverAddress.name, receiverAddress.addr1, receiverAddress.addr2, receiverAddress.city, receiverAddress.state, receiverAddress.zip, receiverAddress.country, receiverAddress.name);
 
-				fileFull = "C:\\Users\\Hugoy\\Workspace\\mailcorgiJS\\" + receiverAddress.name + ".pdf"
+				fileFull = "./" + receiverAddress.name + ".pdf"
 				console.log(fileFull)
 
 				const result = await app.client.files.upload({
@@ -404,6 +411,8 @@ app.event('app_mention', async ({ event, context, client }) => {
 				});
 			}
 		}
+
+
 		case "request": {
 			// send message to receiver
 		}
