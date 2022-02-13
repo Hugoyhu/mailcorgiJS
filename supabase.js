@@ -89,6 +89,7 @@ exports.queryOrderInfoByUID = async function (UID) {
     console.log(orderData);
 
 	for (let i = 0; i<orderData.length; i++) {
+		console.log(orderData[i]['toUID'], UID)
 		if (orderData[i]['toUID'] == UID) {
 			order = orderData[i]
 		}
