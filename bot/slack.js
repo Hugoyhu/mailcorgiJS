@@ -383,9 +383,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 
 
 	if (reqCmd == "purchase") {
-
-		console.log("PURCHASEEEE");
-
+		
 		// sort by envelope
 
 		// is the package an envelope
@@ -410,7 +408,6 @@ app.event('app_mention', async ({ event, context, client }) => {
 			console.log("create envelope");
 			await pdf.createPDF(senderAddress, receiverAddress, order, fileName, app, thread_ts);
 
-			console.log("done supposedly!");
 		} else if (lowerCaseCountry == "us" || lowerCaseCountry == "united states" || lowerCaseCountry == "united states of america" || lowerCaseCountry == "america") {
 			// purchase a shipping label with easypost api IF they live in the US!
 			new easypost(senderAddress,receiverAddress, pkgInfo, app, thread_ts);
