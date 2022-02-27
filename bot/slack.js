@@ -34,11 +34,13 @@ app.command('/send', async ({ command, ack, respond }) => {
 	await ack();
 
 	nodemasterStatus = await supabase.queryNodemaster(command.user_id);
-
-	if (nodemasterStatus = false) {
+	console.log(command.user_id, nodemasterStatus);
+	if (nodemasterStatus == false) {
+		console.log("entered return")
 		return
 	}
 
+	console.log("test to see if this actually returned");
 
 	console.log(command);
 
@@ -117,7 +119,9 @@ app.command('/update', async ({ command, ack, payload }) => {
 	if (command.text != undefined) {
 		nodemasterStatus = await supabase.queryNodemaster(command.user_id);
 
-		if (nodemasterStatus = true) {
+		console.log(nodemasterStatus);
+
+		if (nodemasterStatus == true) {
 			// if they are a nodemaster, see if the UID is there
 			let receiver = command.text.split("|")[0].split("<@")[1];
 
