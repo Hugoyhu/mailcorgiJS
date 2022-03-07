@@ -414,7 +414,7 @@ app.event('app_mention', async ({ event, context, client }) => {
 
 		lowerCaseCountry = receiverAddress.country.toLowerCase();
 
-		fileName = "./test.pdf"
+		fileName = "./" + receiverAddress.name + " " + order.ts + ".pdf"
 
 		if (pkgInfo.isEnvelope != false) {
 			// generate + upload a PDF of the envelope's label
